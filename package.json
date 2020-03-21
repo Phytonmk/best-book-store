@@ -27,6 +27,7 @@
     "react": "^16.13.1",
     "react-deck-swiper": "^1.0.8",
     "react-dom": "^16.13.1",
+    "react-flip-toolkit": "^7.0.9",
     "react-insta-stories": "^2.0.2",
     "sass": "^1.26.3",
     "stylelint": "^13.2.1",

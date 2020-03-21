@@ -1,0 +1,46 @@
+.storiesBlock {
+    z-index: 1;
+    position: relative;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.stories {
+    display: flex;
+    width: auto;
+    white-space: nowrap;
+}
+
+.storyCircle {
+    margin-left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+
+.storyCircle.withoutHeader {
+    background-color: #CC2A49;
+}
+
+.storyShow {
+    z-index: 1;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #111111;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
