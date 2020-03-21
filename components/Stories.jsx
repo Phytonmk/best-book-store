@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import styles from "./Stories.module.sass";
+import styles from "./Stories.module.css";
 import cx from "classnames";
+import { Flipper, Flipped } from "react-flip-toolkit";
 
 const Story = dynamic(() => import("react-insta-stories"), {
   ssr: false
@@ -14,9 +15,24 @@ export const Stories = () => {
     <div className={styles.storiesBlock}>
       <div className={styles.stories}>
         {stories.map((value, index) => {
-          return (
+          const fullscreenMode = isOpen && storyIndex === index;
+          const fullSize = (
             <div
-              key={value.url}
+              className={cx(styles.storyShow)}
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <Story
+                stories={stories}
+                defaultInterval={1500}
+                currentIndex={index}
+                onAllStoriesEnd={() => setOpen(false)}
+              />
+            </div>
+          );
+          const thumb = (
+            <div
               className={cx(
                 styles.storyCircle,
                 stories[index].header ? styles.withHeader : styles.withoutHeader
@@ -31,25 +47,19 @@ export const Stories = () => {
                 setOpen(true);
                 setStoryIndex(index);
               }}
-            ></div>
+            />
+          );
+          return (
+            <Flipper key={value.url} flipKey={fullscreenMode}>
+              {fullscreenMode ? (
+                <Flipped opacity={true} scale={true} flipId={`story-${value.url}`}>{fullSize}</Flipped>
+              ) : (
+                <Flipped opacity={true}  flipId={`story-${value.url}`}>{thumb}</Flipped>
+              )}
+            </Flipper>
           );
         })}
       </div>
-      {isOpen && (
-        <div
-          className={cx(styles.storyShow)}
-          onClick={() => {
-            setOpen(false);
-          }}
-        >
-          <Story
-            stories={stories}
-            defaultInterval={1500}
-            currentIndex={storyIndex}
-            onAllStoriesEnd={() => setOpen(false)}
-          />
-        </div>
-      )}
     </div>
   );
 };
