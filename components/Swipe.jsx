@@ -104,6 +104,7 @@ export const Swipe = () => {
             <video
               className={styles.swipeCardVideo}
               autoPlay={true}
+              loop={true}
               muted={true}
               src={`${config.staticUrl}/${welcomeCards[cardNumber].url}`}
             />

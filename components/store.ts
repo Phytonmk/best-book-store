@@ -15,6 +15,7 @@ export type Store = {
   cartVisible: boolean;
   searchVisible: boolean;
   searchQuery: string;
+  orderVisible: boolean;
   cart: {
     book: Book;
     amount: number;
@@ -25,6 +26,7 @@ export const store = observable<Store>({
   userId: "unknown",
   cartVisible: false,
   searchVisible: false,
+  orderVisible: false,
   searchQuery: "",
   cart: []
 });

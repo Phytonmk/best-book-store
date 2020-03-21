@@ -11,6 +11,9 @@ import {
 import styles from "./Order.module.sass";
 import { config } from "../config";
 import { store } from "./store";
+import { useObserver } from "mobx-react-lite";
+import { toJS } from "mobx";
+import cx from "classnames";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,6 +32,7 @@ const validateMessages = {
 };
 
 export const Order = () => {
+  useObserver(() => toJS(store, { recurseEverything: true }));
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const handleSubmit = React.useCallback(data => {
@@ -50,6 +54,8 @@ export const Order = () => {
       .then(() => {
         setSubmitted(true);
         setLoading(false);
+        store.cart = [];
+        store.searchQuery = "";
       })
       .catch(() => {
         setLoading(false);
@@ -59,45 +65,74 @@ export const Order = () => {
         });
       });
   }, []);
-  if (submitted) {
-    return (
-      <Result
-        status="success"
-        title="You order are being processed 🥳"
-        subTitle="We will contact you in a few hours"
-      />
-    );
-  }
+  React.useEffect(() => {
+    if (store.orderVisible) {
+      const handleWindowClick = () => {
+        store.orderVisible = false;
+        setSubmitted(false);
+      };
+      window.addEventListener("click", handleWindowClick);
+      return () => {
+        window.removeEventListener("click", handleWindowClick);
+      };
+    }
+  }, [store.orderVisible]);
+  const handleContainerClick = React.useCallback(
+    event => {
+      event.nativeEvent.stopImmediatePropagation();
+      if (!store.orderVisible) {
+        store.orderVisible = true;
+      }
+    },
+    [store.orderVisible]
+  );
   return (
-    <div className={styles.container}>
-      <h1>🚚 Ordering</h1>
-      <Spin spinning={loading}>
-        <Form
-          {...layout}
-          name="nest-messages"
-          onFinish={handleSubmit}
-          validateMessages={validateMessages}
-        >
-          <Form.Item name={["name"]} label="Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={["phone"]}
-            label="Phone"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name={["comment"]} label="Comment">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Spin>
+    <div
+      onClick={handleContainerClick}
+      className={cx(styles.container, store.orderVisible && styles.visible)}
+    >
+      {submitted ? (
+        <Result
+          status="success"
+          title="You order are being processed 🥳"
+          subTitle="We will contact you in a few hours"
+        />
+      ) : (
+        <React.Fragment>
+          <h1>🚚 Ordering</h1>
+          <Spin spinning={loading}>
+            <Form
+              {...layout}
+              name="nest-messages"
+              onFinish={handleSubmit}
+              validateMessages={validateMessages}
+            >
+              <Form.Item
+                name={["name"]}
+                label="Name"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="Mikhail Kryuchkov" />
+              </Form.Item>
+              <Form.Item
+                name={["phone"]}
+                label="Phone"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="8 800 555 3535" />
+              </Form.Item>
+              <Form.Item name={["comment"]} label="Comment">
+                <Input.TextArea placeholder="Your special preferences" />
+              </Form.Item>
+              <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </Spin>
+        </React.Fragment>
+      )}
     </div>
   );
 };
