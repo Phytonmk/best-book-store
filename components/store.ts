@@ -12,6 +12,7 @@ type Book = {
 };
 export type Store = {
   userId: string;
+  cartVisible: boolean;
   cart: {
     book: Book;
     amount: number;
@@ -20,6 +21,7 @@ export type Store = {
 
 export const store = observable<Store>({
   userId: "unknown",
+  cartVisible: false,
   cart: [
     {
       book: {

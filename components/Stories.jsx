@@ -15,11 +15,25 @@ export const Stories = () => {
   const [isOpen, setOpen] = useState(false);
   const [storyIndex, setStoryIndex] = useState(1);
   const [loading, setLoading] = useState(true);
-
   React.useEffect(() => {
     fetch(`${config.apiUrl}/stories`, { method: "get" })
       .then(data => data.json())
-      .then(setStories)
+      .then(stories =>
+        setStories(
+          stories.map(({ url, header }) => ({
+            url: `${config.staticUrl}/${url}`,
+            type: "video",
+            seeMore: () => {
+              setOpen(false);
+              return null;
+            },
+            header: {
+              ...header,
+              profileImage: `${config.staticUrl}/${header.profileImage}`
+            }
+          }))
+        )
+      )
       .catch(err => {
         console.error(err);
         notification.open({
@@ -30,8 +44,10 @@ export const Stories = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  const storyWrapperRef = React.useRef(null);
+
   return (
-    <div className={styles.storiesBlock}>
+    <div className={styles.storiesBlock} style={isOpen ? { zIndex: 10 } : {}}>
       <div className={styles.stories}>
         {loading &&
           [1, 2, 3, 4, 5, 6].map(index => (
@@ -42,9 +58,12 @@ export const Stories = () => {
             const fullscreenMode = isOpen && storyIndex === index;
             const fullSize = (
               <div
+                ref={storyWrapperRef}
                 className={cx(styles.storyShow)}
-                onClick={() => {
-                  setOpen(false);
+                onClick={event => {
+                  if (event.target === storyWrapperRef.current) {
+                    setOpen(false);
+                  }
                 }}
               >
                 <Story

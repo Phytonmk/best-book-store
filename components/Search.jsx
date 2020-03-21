@@ -4,7 +4,7 @@ import cx from "classnames";
 import { Input, List, Avatar, Button } from "antd";
 
 export const Search = () => {
-  const [isSearchingMode, setSearchingMode] = useState(true);
+  const [isSearchingMode, setSearchingMode] = useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => {
     if (isSearchingMode) {

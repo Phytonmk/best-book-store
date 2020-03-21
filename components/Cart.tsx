@@ -9,12 +9,12 @@ import { toJS } from "mobx";
 import { Order } from "./Order";
 
 export const Cart = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  useObserver(() => toJS(store, { recurseEverything: true }));
   const [orderPage, setOrderPage] = React.useState(false);
   React.useEffect(() => {
-    if (isOpen) {
+    if (store.cartVisible) {
       const handleWindowClick = () => {
-        setIsOpen(false);
+        store.cartVisible = false;
         setOrderPage(false);
       };
       window.addEventListener("click", handleWindowClick);
@@ -22,24 +22,23 @@ export const Cart = () => {
         window.removeEventListener("click", handleWindowClick);
       };
     }
-  }, [isOpen, setIsOpen]);
+  }, [store.cartVisible]);
   const handleContainerClick = React.useCallback(
     event => {
       event.nativeEvent.stopImmediatePropagation();
-      if (!isOpen) {
-        setIsOpen(true);
+      if (!store.cartVisible) {
+        store.cartVisible = true;
       }
     },
-    [isOpen, setIsOpen]
+    [store.cartVisible]
   );
-  useObserver(() => toJS(store, { recurseEverything: true }));
   const sum = store.cart.reduce(
     (sum, item) => sum + parseInt(item.book.price, 10) * item.amount,
     0
   );
   return (
     <div
-      className={cx(styles.cart, isOpen && styles.visible)}
+      className={cx(styles.cart, store.cartVisible && styles.visible)}
       onClick={handleContainerClick}
     >
       {orderPage ? (
@@ -81,7 +80,7 @@ export const Cart = () => {
                       onClick={() => {
                         if (item.amount === 1) {
                           if (store.cart.length === 1) {
-                            setIsOpen(false);
+                            store.cartVisible = false;
                           }
                           store.cart.splice(index, 1);
                         } else {

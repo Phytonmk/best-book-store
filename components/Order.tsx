@@ -33,7 +33,7 @@ export const Order = () => {
   const [loading, setLoading] = React.useState(false);
   const handleSubmit = React.useCallback(data => {
     setLoading(true);
-    const details = `${data.name}, ${data.phone}\n${data.comment}`;
+    const details = `${data.name}, ${data.phone}\n${data.comment || ""}`;
     const formData = new FormData();
     formData.append("user_id", store.userId);
     formData.append(
