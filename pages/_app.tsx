@@ -1,12 +1,11 @@
 import styles from "./_app.module.sass";
 import Head from "next/head";
+import stylesheet from "antd/dist/antd.min.css";
+
 const MyApp = ({ Component, pageProps }: any) => (
   <div className={styles.app}>
     <Head>
-      <link
-        href="https://fonts.googleapis.com/css?family=Baloo+2&display=swap"
-        rel="stylesheet"
-      />
+      <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
     </Head>
     <div className={styles.inner}>
       <Component {...pageProps} />
