@@ -1,23 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import styles from "./Stories.module.sass";
+import cx from "classnames";
 
 const Story = dynamic(() => import("react-insta-stories"), {
   ssr: false
 });
 
 export const Stories = () => {
+  const [isOpen, setOpen] = useState(false);
+  const [storyIndex, setStoryIndex] = useState(1);
   return (
-    <div>
-      {stories.map((value, index) => {
-        return <div className={styles.story}>{index}</div>;
-      })}
-      {/* <Story
-        stories={stories}
-        defaultInterval={1500}
-        width={432}
-        height={768}
-      /> */}
+    <div className={styles.storiesBlock}>
+      <div className={styles.stories}>
+        {stories.map((value, index) => {
+          return (
+            <div
+              className={cx(
+                styles.storyCircle,
+                stories[index].header ? styles.withHeader : styles.withoutHeader
+              )}
+              style={{
+                backgroundImage: stories[index].header
+                  ? `url( ${stories[index].header.profileImage} ) `
+                  : undefined,
+                backgroundSize: "100%"
+              }}
+              onClick={() => {
+                setOpen(true);
+                setStoryIndex(index);
+              }}
+            ></div>
+          );
+        })}
+      </div>
+      {isOpen && (
+        <div
+          className={cx(styles.storyShow)}
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          <Story
+            stories={stories}
+            defaultInterval={1500}
+            currentIndex={storyIndex}
+            onAllStoriesEnd={() => setOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
