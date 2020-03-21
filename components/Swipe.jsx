@@ -13,50 +13,50 @@ import cx from "classnames";
 export const Swipe = () => {
   const [cardNumber, setCardNumber] = useState(0);
 
-  const handleOnSwipe = swipeDirection => {
-    const [welcomeCards, setWelcomeCards] = useState([]);
-    React.useEffect(() => {
-      fetch(`${config.apiUrl}/cards`, { method: "get" })
-        .then(data => data.json())
-        .then(setWelcomeCards)
-        .catch(err => {
-          console.error(err);
-          notification.open({
-            message: "Our server is being down 🤯",
-            description: "Our team of the web monkeys are on the way to fix it"
-          });
+  const [welcomeCards, setWelcomeCards] = useState([]);
+  React.useEffect(() => {
+    fetch(`${config.apiUrl}/cards`, { method: "get" })
+      .then(data => data.json())
+      .then(setWelcomeCards)
+      .catch(err => {
+        console.error(err);
+        notification.open({
+          message: "Our server is being down 🤯",
+          description: "Our team of the web monkeys are on the way to fix it"
         });
-      //  .finally(() => setLoading(false));
-    }, []);
+      });
+    //  .finally(() => setLoading(false));
+  }, []);
 
-    const [book, setBook] = useState(undefined);
-    const loadBook = React.useCallback(() => {
-      fetch(`${config.apiUrl}/book?user_id=${store.userId}`, { method: "get" })
-        .then(data => data.json())
-        .then(data => {
-          setBook(JSON.parse(data.book));
-        })
-        .catch(err => {
-          console.error(err);
-          notification.open({
-            message: "Our server is being down 🤯",
-            description: "Our team of the web monkeys are on the way to fix it"
-          });
+  const [book, setBook] = useState(undefined);
+  const loadBook = React.useCallback(() => {
+    fetch(`${config.apiUrl}/book?user_id=${store.userId}`, { method: "get" })
+      .then(data => data.json())
+      .then(data => {
+        setBook(JSON.parse(data.book));
+      })
+      .catch(err => {
+        console.error(err);
+        notification.open({
+          message: "Our server is being down 🤯",
+          description: "Our team of the web monkeys are on the way to fix it"
         });
-      //  .finally(() => setLoading(false));
-    }, []);
-    React.useEffect(loadBook, []);
+      });
+    //  .finally(() => setLoading(false));
+  }, []);
+  React.useEffect(loadBook, []);
+  const handleOnSwipe = swipeDirection => {
     if (swipeDirection === direction.RIGHT) {
       // handle right swipe
       setCardNumber(cardNumber + 1);
-      loadBook;
+      loadBook();
       return;
     }
 
     if (swipeDirection === direction.LEFT) {
       // handle left swipe
       setCardNumber(cardNumber + 1);
-      loadBook;
+      loadBook();
       return;
     }
   };
