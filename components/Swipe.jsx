@@ -110,12 +110,14 @@ export const Swipe = () => {
           description: "Our team of the web monkeys are on the way to fix it"
         });
       });
-    //  .finally(() => setLoading(false));
   }, []);
 
   React.useEffect(loadBook, []);
   const sendRate = React.useCallback(
     isGood => {
+      if (!books[1]) {
+        return;
+      }
       const formData = new FormData();
       formData.append("user_id", store.userId.toString());
       formData.append("book_id", books[1].id);
@@ -123,39 +125,35 @@ export const Swipe = () => {
       fetch(`${config.apiUrl}/rate`, {
         method: "post",
         body: formData
-      })
-        .then(() => {
-          setSubmitted(true);
-          setLoading(false);
-        })
-        .catch(() => {
-          // setLoading(false);
-          notification.open({
-            message: "Our server is being down 🤯",
-            description: "Our team of the web monkeys are on the way to fix it"
-          });
+      }).catch(err => {
+        console.error(err);
+        notification.open({
+          message: "Our server is being down 🤯",
+          description: "Our team of the web monkeys are on the way to fix it"
         });
+      });
     },
     [books[1]]
   );
-  const handleSwipe = swipeDirection => {
-    if (swipeDirection === direction.RIGHT) {
-      // handle right swipe
-      sendRate(true);
-    }
-
-    if (swipeDirection === direction.LEFT) {
-      // handle left swipe
-      sendRate(false);
-    }
+  const handleSwipe = direction => {
+    console.log("handleSwipe", direction);
+    sendRate(direction === "right");
 
     setCardNumber(cardNumber + 1);
     if (cardNumber >= welcomeCards.length - 2) loadBook();
   };
 
+  const [nextCardAlmostVisible, setNextCardAlmostVisible] = React.useState(
+    false
+  );
+  const swipeRef = React.useRef(null);
+
   return (
     <div className={styles.cardContainer}>
-      <div className={styles.nextCard}>
+      <div
+        className={styles.nextCard}
+        // style={nextCardAlmostVisible ? { zIndex: 10 } : {}}
+      >
         <Card
           introCard={Boolean(welcomeCards[cardNumber + 1])}
           color={
@@ -166,28 +164,45 @@ export const Swipe = () => {
             `${config.staticUrl}/${welcomeCards[cardNumber + 1].url}`
           }
           book={books[0]}
-        />
-      </div>
-      <Swipeable
-        key={cardNumber}
-        onSwipe={() => console.log("swipe")}
-        onBeforeSwipe={() => console.log("before swipe")}
-        onBeforeSwipe={() => {
-          console.log("after swipe");
-          handleSwipe();
-        }}
-      >
-        <Card
-          introCard={Boolean(welcomeCards[cardNumber])}
-          color={welcomeCards[cardNumber] && welcomeCards[cardNumber].color}
-          url={
-            welcomeCards[cardNumber] &&
-            `${config.staticUrl}/${welcomeCards[cardNumber].url}`
-          }
-          book={books[1]}
           finalCard={finalCard}
         />
-      </Swipeable>
+      </div>
+      {[
+        (Boolean(welcomeCards[cardNumber]) || books.length > 1) && (
+          <Swipeable
+            key={cardNumber}
+            onSwipe={console.log}
+            onOpacityChange={(opacity, ...rest) => {
+              const nextVisible = opacity < 0.05;
+              if (nextVisible !== nextCardAlmostVisible) {
+                setNextCardAlmostVisible(nextVisible);
+                if (nextVisible) {
+                  const blockPosition = swipeRef.current.getBoundingClientRect()
+                    .x;
+                  handleSwipe(blockPosition < 0 ? "left" : "right");
+                }
+              }
+            }}
+          >
+            <div ref={swipeRef}>
+              {!nextCardAlmostVisible && (
+                <Card
+                  introCard={Boolean(welcomeCards[cardNumber])}
+                  color={
+                    welcomeCards[cardNumber] && welcomeCards[cardNumber].color
+                  }
+                  url={
+                    welcomeCards[cardNumber] &&
+                    `${config.staticUrl}/${welcomeCards[cardNumber].url}`
+                  }
+                  book={books[1] || books[0]}
+                  finalCard={finalCard}
+                />
+              )}
+            </div>
+          </Swipeable>
+        )
+      ]}
     </div>
   );
 };
