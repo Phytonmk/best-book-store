@@ -43,7 +43,7 @@
 }
 
 .searchBlock.notSearchingMode {
-  transform: translateY(calc(100% - 40px));
+  transform: translateY(calc(100% - 100px));
 }
 
 .searchBlock.isSearchingMode {

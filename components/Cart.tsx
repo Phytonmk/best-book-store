@@ -19,7 +19,7 @@ export const Cart = () => {
         window.removeEventListener("click", handleWindowClick);
       };
     }
-  }, [setIsOpen]);
+  }, [isOpen, setIsOpen]);
   const handleContainerClick = React.useCallback(
     event => {
       event.nativeEvent.stopImmediatePropagation();
