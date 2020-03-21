@@ -4,14 +4,11 @@ import dynamic from "next/dynamic";
 import styles from "./Swipe.module.sass";
 import { config } from "../config";
 import { store } from "./store";
-import { List, Avatar, notification } from "antd";
+import { List, Avatar, notification, Button } from "antd";
 import cx from "classnames";
-// const Swipeable = dynamic(() => import("react-deck-swiper"), {
-//   ssr: false
-// });
 
 export const Swipe = () => {
-  const [cardNumber, setCardNumber] = useState(0);
+  const [cardNumber, setCardNumber] = useState(5);
 
   const [welcomeCards, setWelcomeCards] = useState([]);
   React.useEffect(() => {
@@ -49,14 +46,14 @@ export const Swipe = () => {
     if (swipeDirection === direction.RIGHT) {
       // handle right swipe
       setCardNumber(cardNumber + 1);
-      loadBook();
+      if (cardNumber > welcomeCards.length) loadBook();
       return;
     }
 
     if (swipeDirection === direction.LEFT) {
       // handle left swipe
       setCardNumber(cardNumber + 1);
-      loadBook();
+      if (cardNumber > welcomeCards.length) loadBook();
       return;
     }
   };
@@ -79,23 +76,43 @@ export const Swipe = () => {
           </div>
         ) : (
           <div
-            className={cx(styles.swipeCard, styles.recommendedCard)}
+            className={styles.swipeCard}
             style={{
               backgroundColor: "#8FB9A8"
             }}
           >
             {book && (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <div className={styles.meta}>
-                      <Avatar size={85} src={book.imageLink} />
-                    </div>
-                  }
-                  title={`${book.author}: ${book.title}`}
-                  description={book.description}
+              <div className={styles.recommendedBook}>
+                <Avatar
+                  className={styles.avatar}
+                  size={200}
+                  src={book.imageLink}
                 />
-              </List.Item>
+                <div
+                  className={styles.title}
+                >{`${book.author}: ${book.title}`}</div>
+                {book.description && (
+                  <div className={styles.description}>{book.description}</div>
+                )}
+                <Button
+                  shape="round"
+                  size="large"
+                  type="ghost"
+                  onClick={() => {
+                    const existingBook = store.cart.find(
+                      item => item.book.id === book.id
+                    );
+                    if (!existingBook) {
+                      store.cart.push({ book, amount: 1 });
+                    } else {
+                      existingBook.amount++;
+                    }
+                    store.cartVisible = true;
+                  }}
+                >
+                  BUY ({book.price}$)
+                </Button>
+              </div>
             )}
           </div>
         )}
@@ -103,18 +120,3 @@ export const Swipe = () => {
     </div>
   );
 };
-
-// const welcomeCards = [
-//   {
-//     backgroundColor: "#F1828D",
-//     url: ""
-//   },
-//   {
-//     backgroundColor: "#FCD0BA",
-//     url: ""
-//   },
-//   {
-//     backgroundColor: "#765D69",
-//     url: ""
-//   }
-// ];
