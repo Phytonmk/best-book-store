@@ -49,14 +49,14 @@ export const Swipe = () => {
     if (swipeDirection === direction.RIGHT) {
       // handle right swipe
       setCardNumber(cardNumber + 1);
-      loadBook;
+      loadBook();
       return;
     }
 
     if (swipeDirection === direction.LEFT) {
       // handle left swipe
       setCardNumber(cardNumber + 1);
-      loadBook;
+      loadBook();
       return;
     }
   };
