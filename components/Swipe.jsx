@@ -1,16 +1,42 @@
 import React, { useState } from "react";
 import { Swipeable, direction } from "react-deck-swiper";
 import dynamic from "next/dynamic";
-import styles from "./Swipe.module.sass";
+import styles from "./Swipe.module.css";
 import { config } from "../config";
 import { store } from "./store";
 import { List, Avatar, notification, Button } from "antd";
 import cx from "classnames";
 
-const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
+const getRandomColor = seed => {
+  const colors = [
+    "#F1828D",
+    "#FCD0BA",
+    "#765D69",
+    "#8FB9A8",
+    "#CC2A49",
+    "#F99E4C",
+    "#F36F38",
+    "#EF4648"
+  ];
+  seed = (seed || "test")
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const color = seed % colors.length;
+
+  return colors[color];
+};
+
+const Card = ({
+  introCard = false,
+  finalCard = false,
+  color,
+  url,
+  book,
+  background = false
+}) => {
   return introCard ? (
     <div
-      className={styles.swipeCard}
+      className={cx(styles.swipeCard, background && styles.backgroundCard)}
       style={{
         backgroundColor: color
       }}
@@ -27,10 +53,7 @@ const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
     <div
       className={styles.swipeCard}
       style={{
-        backgroundColor:
-          randomBackgroundColors[
-            Math.floor(Math.random() * randomBackgroundColors.length)
-          ]
+        backgroundColor: getRandomColor(book ? book.imageLink : url)
       }}
     >
       {book && (
@@ -150,74 +173,23 @@ export const Swipe = () => {
   const [nextCardAlmostVisible, setNextCardAlmostVisible] = React.useState(
     false
   );
-  const swipeRef = React.useRef(null);
 
   return (
     <div className={styles.cardContainer}>
-      <div
-        className={styles.nextCard}
-        // style={nextCardAlmostVisible ? { zIndex: 10 } : {}}
-      >
-        <Card
-          introCard={Boolean(welcomeCards[cardNumber + 1])}
-          color={
-            welcomeCards[cardNumber + 1] && welcomeCards[cardNumber + 1].color
-          }
-          url={
-            welcomeCards[cardNumber + 1] &&
-            `${config.staticUrl}/${welcomeCards[cardNumber + 1].url}`
-          }
-          book={books[0]}
-          finalCard={finalCard}
-        />
-      </div>
       {[
-        (Boolean(welcomeCards[cardNumber]) || books.length > 1) && (
-          <Swipeable
-            key={cardNumber}
-            onSwipe={console.log}
-            onOpacityChange={(opacity, ...rest) => {
-              const nextVisible = opacity < 0.05;
-              if (nextVisible !== nextCardAlmostVisible) {
-                setNextCardAlmostVisible(nextVisible);
-                if (nextVisible) {
-                  const blockPosition = swipeRef.current.getBoundingClientRect()
-                    .x;
-                  handleSwipe(blockPosition < 0 ? "left" : "right");
-                }
-              }
-            }}
-          >
-            <div ref={swipeRef}>
-              {!nextCardAlmostVisible && (
-                <Card
-                  introCard={Boolean(welcomeCards[cardNumber])}
-                  color={
-                    welcomeCards[cardNumber] && welcomeCards[cardNumber].color
-                  }
-                  url={
-                    welcomeCards[cardNumber] &&
-                    `${config.staticUrl}/${welcomeCards[cardNumber].url}`
-                  }
-                  book={books[1] || books[0]}
-                  finalCard={finalCard}
-                />
-              )}
-            </div>
-          </Swipeable>
-        )
+        <Swipeable key={cardNumber} onSwipe={handleSwipe}>
+          <Card
+            introCard={Boolean(welcomeCards[cardNumber])}
+            color={welcomeCards[cardNumber] && welcomeCards[cardNumber].color}
+            url={
+              welcomeCards[cardNumber] &&
+              `${config.staticUrl}/${welcomeCards[cardNumber].url}`
+            }
+            book={books[1] || books[0]}
+            finalCard={finalCard}
+          />
+        </Swipeable>
       ]}
     </div>
   );
 };
-
-const randomBackgroundColors = [
-  "#F1828D",
-  "#FCD0BA",
-  "#765D69",
-  "#8FB9A8",
-  "#CC2A49",
-  "#F99E4C",
-  "#F36F38",
-  "#EF4648"
-];

@@ -1,0 +1,65 @@
+.cardContainer {
+  overflow: visible;
+}
+
+.swipeCard {
+  margin: 0 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: calc(100vh - 300px);
+
+  border-radius: 15px;
+
+  opacity: 0;
+
+  background-size: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation: appear 0.5s ease-out 0.5s forwards;
+}
+
+.nextCard {
+  position: absolute;
+}
+
+.swipeCardVideo {
+  width: 100%;
+  height: 100%;
+}
+
+.recommendedBook {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+  height: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
+
+  font-size: 20px;
+}
+
+.recommendedBook .avatar {
+  flex-shrink: 0;
+}
+
+.recommendedBook .title {
+  font-weight: 900;
+}
+
+.recommendedBook .description {
+  overflow-y: scroll;
+  max-height: 30%;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
