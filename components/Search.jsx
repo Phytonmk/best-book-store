@@ -63,8 +63,10 @@ export const Search = () => {
                 <span>{value.title}</span>
                 <span>{value.author}</span>
                 <article>{value.description}</article>
-                <span>{value.price}</span>
-                <button className={styles.buyButton}>Buy</button>
+                <span className={styles.buyBlock}>
+                  <span>{value.price}</span>
+                  <button className={styles.buyButton}>Buy</button>
+                </span>
               </div>
             </div>
           );
