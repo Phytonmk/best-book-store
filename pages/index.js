@@ -3,6 +3,7 @@ import { Search } from "../components/Search";
 import { Stories } from "../components/Stories";
 import { Swipe } from "../components/Swipe";
 import { Cart } from "../components/Cart";
+import { Order } from "../components/Order";
 import { Typography } from "antd";
 
 export default function Index() {
@@ -17,6 +18,7 @@ export default function Index() {
       <Swipe />
       <Search />
       <Cart />
+      <Order />
     </div>
   );
 }

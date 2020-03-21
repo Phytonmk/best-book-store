@@ -88,8 +88,7 @@ export const Stories = () => {
                 style={{
                   backgroundImage: stories[index].header
                     ? `url( ${stories[index].header.profileImage} ) `
-                    : undefined,
-                  backgroundSize: "100%"
+                    : undefined
                 }}
                 onClick={() => {
                   setOpen(true);

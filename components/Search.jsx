@@ -19,7 +19,7 @@ function debounce(cb, wait = 200) {
 export const Search = () => {
   useObserver(() => toJS(store, { recurseEverything: true }));
   const [searchedBooks, setSearchedBooks] = useState([]);
-  const [loading, setLoading] = useState([]);
+  const [loading, setLoading] = useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => {
     if (store.searchVisible) {
