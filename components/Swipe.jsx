@@ -7,8 +7,69 @@ import { store } from "./store";
 import { List, Avatar, notification, Button } from "antd";
 import cx from "classnames";
 
+const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
+  return introCard ? (
+    <div
+      className={styles.swipeCard}
+      style={{
+        backgroundColor: color
+      }}
+    >
+      <video
+        className={styles.swipeCardVideo}
+        autoPlay={true}
+        loop={true}
+        muted={true}
+        src={url}
+      />
+    </div>
+  ) : (
+    <div
+      className={styles.swipeCard}
+      style={{
+        backgroundColor: "#8FB9A8"
+      }}
+    >
+      {book && (
+        <div className={styles.recommendedBook}>
+          <Avatar className={styles.avatar} size={200} src={book.imageLink} />
+          <div className={styles.title}>
+            {" "}
+            {book.author ? `${book.author}: ${book.title}` : " "}
+          </div>
+          {book.description && (
+            <div className={styles.description}>{book.description}</div>
+          )}
+          {!finalCard ? (
+            <Button
+              shape="round"
+              size="large"
+              type="ghost"
+              onClick={() => {
+                const existingBook = store.cart.find(
+                  item => item.book.id === book.id
+                );
+                if (!existingBook) {
+                  store.cart.push({ book, amount: 1 });
+                } else {
+                  existingBook.amount++;
+                }
+                store.cartVisible = true;
+              }}
+            >
+              BUY ({book.price}$)
+            </Button>
+          ) : (
+            <div>{"\n"}</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Swipe = () => {
-  const [cardNumber, setCardNumber] = useState(5);
+  const [cardNumber, setCardNumber] = useState(0);
 
   const [welcomeCards, setWelcomeCards] = useState([]);
   React.useEffect(() => {
@@ -22,22 +83,25 @@ export const Swipe = () => {
           description: "Our team of the web monkeys are on the way to fix it"
         });
       });
-    //  .finally(() => setLoading(false));
   }, []);
-  const [dataIsTrue, setDataIsTrue] = useState(true);
-  const [book, setBook] = useState(undefined);
+
+  const [books, setBooks] = useState([]);
+  const [finalCard, setFinalCard] = useState(false);
   const loadBook = React.useCallback(() => {
     fetch(`${config.apiUrl}/book?user_id=${store.userId}`, { method: "get" })
       .then(data => data.json())
       .then(data => {
-        data === true
-          ? setBook(JSON.parse(data.book))
-          : setBook({
-              imageLink:
-                "https://cdn.pixabay.com/photo/2018/02/17/17/33/sorry-3160426_960_720.png",
-              description:
-                "Sorry, you have watched all the books recommended to you. You can use searching now"
-            }) && setDataIsTrue(false);
+        data.found === true
+          ? setBooks(books => [data.book, ...books])
+          : setBooks([
+              {
+                imageLink:
+                  "https://cdn.pixabay.com/photo/2018/02/17/17/33/sorry-3160426_960_720.png",
+                description:
+                  "Sorry, you have watched all the books recommended to you. You can use searching now"
+              },
+              ...books
+            ]) && setFinalCard(true);
       })
       .catch(err => {
         console.error(err);
@@ -48,12 +112,13 @@ export const Swipe = () => {
       });
     //  .finally(() => setLoading(false));
   }, []);
+
   React.useEffect(loadBook, []);
   const sendRate = React.useCallback(
     isGood => {
       const formData = new FormData();
       formData.append("user_id", store.userId.toString());
-      formData.append("book_id", book.id);
+      formData.append("book_id", books[1].id);
       formData.append("good", isGood);
       fetch(`${config.apiUrl}/rate`, {
         method: "post",
@@ -71,94 +136,57 @@ export const Swipe = () => {
           });
         });
     },
-    [book]
+    [books[1]]
   );
-  const handleOnSwipe = swipeDirection => {
+  const handleSwipe = swipeDirection => {
     if (swipeDirection === direction.RIGHT) {
       // handle right swipe
       sendRate(true);
-      setCardNumber(cardNumber + 1);
-      if (cardNumber > welcomeCards.length) loadBook();
-      return;
     }
 
     if (swipeDirection === direction.LEFT) {
       // handle left swipe
       sendRate(false);
-      setCardNumber(cardNumber + 1);
-      if (cardNumber > welcomeCards.length) loadBook();
-      return;
     }
+
+    setCardNumber(cardNumber + 1);
+    if (cardNumber >= welcomeCards.length - 2) loadBook();
   };
 
   return (
     <div className={styles.cardContainer}>
-      <Swipeable onSwipe={handleOnSwipe}>
-        {cardNumber < welcomeCards.length ? (
-          <div
-            className={styles.swipeCard}
-            style={{
-              backgroundColor: welcomeCards[cardNumber].color
-            }}
-          >
-            <video
-              className={styles.swipeCardVideo}
-              autoPlay={true}
-              loop={true}
-              muted={true}
-              src={`${config.staticUrl}/${welcomeCards[cardNumber].url}`}
-            />
-          </div>
-        ) : (
-          <div
-            className={styles.swipeCard}
-            style={{
-              backgroundColor:
-                randomBackgroundColors[
-                  Math.floor(Math.random * randomBackgroundColors.length)
-                ]
-            }}
-          >
-            {book && (
-              <div className={styles.recommendedBook}>
-                <Avatar
-                  className={styles.avatar}
-                  size={200}
-                  src={book.imageLink}
-                />
-                <div className={styles.title}>
-                  {" "}
-                  {book.author ? `${book.author}: ${book.title}` : " "}
-                </div>
-                {book.description && (
-                  <div className={styles.description}>{book.description}</div>
-                )}
-                {!dataIsTrue ? (
-                  <Button
-                    shape="round"
-                    size="large"
-                    type="ghost"
-                    onClick={() => {
-                      const existingBook = store.cart.find(
-                        item => item.book.id === book.id
-                      );
-                      if (!existingBook) {
-                        store.cart.push({ book, amount: 1 });
-                      } else {
-                        existingBook.amount++;
-                      }
-                      store.cartVisible = true;
-                    }}
-                  >
-                    BUY ({book.price}$)
-                  </Button>
-                ) : (
-                  <div>{"\n"}</div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+      <div className={styles.nextCard}>
+        <Card
+          introCard={Boolean(welcomeCards[cardNumber + 1])}
+          color={
+            welcomeCards[cardNumber + 1] && welcomeCards[cardNumber + 1].color
+          }
+          url={
+            welcomeCards[cardNumber + 1] &&
+            `${config.staticUrl}/${welcomeCards[cardNumber + 1].url}`
+          }
+          book={books[0]}
+        />
+      </div>
+      <Swipeable
+        key={cardNumber}
+        onSwipe={() => console.log("swipe")}
+        onBeforeSwipe={() => console.log("before swipe")}
+        onBeforeSwipe={() => {
+          console.log("after swipe");
+          handleSwipe();
+        }}
+      >
+        <Card
+          introCard={Boolean(welcomeCards[cardNumber])}
+          color={welcomeCards[cardNumber] && welcomeCards[cardNumber].color}
+          url={
+            welcomeCards[cardNumber] &&
+            `${config.staticUrl}/${welcomeCards[cardNumber].url}`
+          }
+          book={books[1]}
+          finalCard={finalCard}
+        />
       </Swipeable>
     </div>
   );

@@ -41,7 +41,12 @@ export const Cart = () => {
       <List
         className={styles.list}
         size="large"
-        header={<div>🛒 Cart</div>}
+        locale={{
+          emptyText: "👆🏼Swipe or Search 🔍 for Books 📚"
+        }}
+        header={
+          <div className={styles.header}>🛒 Selected Books Goes Here</div>
+        }
         footer={
           <div>
             <p>
