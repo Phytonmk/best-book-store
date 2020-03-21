@@ -1,10 +1,27 @@
 import React, { useState } from "react";
 import styles from "./Search.module.css";
 import cx from "classnames";
-import { Input } from "antd";
+import { Input, List, Avatar, Button } from "antd";
 
 export const Search = () => {
-  const [isSearchingMode, setSearchingMode] = useState(false);
+  const [isSearchingMode, setSearchingMode] = useState(true);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (isSearchingMode) {
+      setTimeout(() => {
+        if (!ref.current) {
+          return;
+        }
+        const input = ref.current.input.input;
+        const touchHandler = () => {
+          input.focus();
+        };
+        input.addEventListener("touchstart", touchHandler);
+        input.dispatchEvent(new Event("touchstart"));
+        input.removeEventListener("touchstart", touchHandler);
+      }, 500);
+    }
+  }, [isSearchingMode]);
   React.useEffect(() => {
     if (isSearchingMode) {
       const handleWindowClick = () => {
@@ -34,38 +51,35 @@ export const Search = () => {
         }}
       >
         <Input.Search
+          ref={ref}
           placeholder="Search for books"
           className={styles.searchInput}
           size="large"
           disabled={isSearchingMode ? false : true}
         ></Input.Search>
       </div>
-      <div className={styles.searchedBooksBlock}>
-        {searchedBooks.map((value, index) => {
-          return (
-            <div key={value.title} className={styles.searchedBook}>
-              <div
-                className={styles.bookImage}
-                style={{
-                  backgroundImage: `url( ${value.imageLink} )`,
-                  backgroundSize: "cover",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center"
-                }}
-              ></div>
-              <div className={styles.bookDescription}>
-                <span className={styles.title}>{value.title}</span>
-                <span className={styles.author}>{value.author}</span>
-                <article>{value.description}</article>
-                <span className={styles.buyBlock}>
-                  <span className={styles.price}>{value.price}$</span>
-                  <button className={styles.buyButton}>Buy</button>
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <List
+        className={styles.list}
+        size="large"
+        bordered
+        dataSource={searchedBooks}
+        renderItem={(book, index) => (
+          <List.Item>
+            <List.Item.Meta
+              avatar={
+                <div className={styles.meta}>
+                  <Avatar size={85} src={book.imageLink} />
+                  <Button size="large" className={styles.buyBtn}>
+                    {book.price}$
+                  </Button>
+                </div>
+              }
+              title={`${book.author}: ${book.title}`}
+              description={book.description}
+            />
+          </List.Item>
+        )}
+      />
     </div>
   );
 };
