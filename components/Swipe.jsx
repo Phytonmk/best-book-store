@@ -24,7 +24,7 @@ export const Swipe = () => {
     }
   };
   return (
-    <div>
+    <div className={styles.cardContainer}>
       <Swipeable onSwipe={handleOnSwipe}>
         {cardNumber < welcomeCards.length ? (
           <div
