@@ -113,7 +113,10 @@ export const Swipe = () => {
           <div
             className={styles.swipeCard}
             style={{
-              backgroundColor: "#8FB9A8"
+              backgroundColor:
+                randomBackgroundColors[
+                  Math.floor(Math.random * randomBackgroundColors.length)
+                ]
             }}
           >
             {book && (
@@ -160,3 +163,14 @@ export const Swipe = () => {
     </div>
   );
 };
+
+const randomBackgroundColors = [
+  "#F1828D",
+  "#FCD0BA",
+  "#765D69",
+  "#8FB9A8",
+  "#CC2A49",
+  "#F99E4C",
+  "#F36F38",
+  "#EF4648"
+];
