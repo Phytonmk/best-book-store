@@ -27,6 +27,11 @@
     "react-deck-swiper": "^1.0.8",
     "react-dom": "^16.13.1",
     "react-insta-stories": "^2.0.2",
-    "sass": "^1.26.3"
+    "sass": "^1.26.3",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.2",
+    "@types/react": "^16.9.25"
   }
 }

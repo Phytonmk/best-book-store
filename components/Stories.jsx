@@ -16,6 +16,7 @@ export const Stories = () => {
         {stories.map((value, index) => {
           return (
             <div
+              key={value.url}
               className={cx(
                 styles.storyCircle,
                 stories[index].header ? styles.withHeader : styles.withoutHeader

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
 import styles from "./Search.module.sass";
 import cx from "classnames";
 
@@ -38,7 +37,6 @@ export const Search = () => {
         <svg
           viewBox="64 64 896 896"
           focusable="false"
-          class=""
           data-icon="search"
           width="2em"
           height="2em"
@@ -51,7 +49,7 @@ export const Search = () => {
       <div className={styles.searchedBooksBlock}>
         {searchedBooks.map((value, index) => {
           return (
-            <div className={styles.searchedBook}>
+            <div key={value.title} className={styles.searchedBook}>
               <div
                 className={styles.bookImage}
                 style={{
