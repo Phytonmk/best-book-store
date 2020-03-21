@@ -1,6 +1,5 @@
 import { observable, autorun, toJS } from "mobx";
 import fingerprint from "fingerprintjs2";
-console.log(fingerprint);
 type Book = {
   author: string;
   imageLink: string;
@@ -40,7 +39,6 @@ export const store = observable<Store>({
 
 if (process.browser) {
   fingerprint.getV18(userId => {
-    console.log(userId);
     store.userId = userId;
   });
 }
