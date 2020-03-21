@@ -43,7 +43,7 @@ const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
           {book.description && (
             <div className={styles.description}>{book.description}</div>
           )}
-          {!finalCard ? (
+          {finalCard ? (
             <Button
               shape="round"
               size="large"
