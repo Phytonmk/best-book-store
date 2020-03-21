@@ -13,6 +13,8 @@ type Book = {
 export type Store = {
   userId: string;
   cartVisible: boolean;
+  searchVisible: boolean;
+  searchQuery: string;
   cart: {
     book: Book;
     amount: number;
@@ -22,21 +24,9 @@ export type Store = {
 export const store = observable<Store>({
   userId: "unknown",
   cartVisible: false,
-  cart: [
-    {
-      book: {
-        author: "Mark P. O. Morford",
-        imageLink: "http://images.amazon.com/images/P/0195153448.jpg",
-        title: "Classical Mythology",
-        year: "2002",
-        description: "...",
-        id: "0195153448",
-        price: "5.17",
-        count: 84
-      },
-      amount: 16
-    }
-  ]
+  searchVisible: false,
+  searchQuery: "",
+  cart: []
 });
 
 if (process.browser) {

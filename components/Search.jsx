@@ -4,70 +4,72 @@ import cx from "classnames";
 import { Input, List, Avatar, Button } from "antd";
 import { config } from "../config";
 import { store } from "./store";
+import { useObserver } from "mobx-react-lite";
+import { toJS } from "mobx";
 
 function debounce(cb, wait = 200) {
-  let h = 0;
-  let callable = (...args) => {
-    clearTimeout(h);
-    h = setTimeout(() => cb(...args), wait);
+  let timeout = 0;
+  const callable = (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => cb(...args), wait);
   };
   return callable;
 }
 
 export const Search = () => {
+  useObserver(() => toJS(store, { recurseEverything: true }));
   const [searchedBooks, setSearchedBooks] = useState([]);
-  const [isSearchingMode, setSearchingMode] = useState(false);
+  const [loading, setLoading] = useState([]);
   const ref = React.useRef(null);
   React.useEffect(() => {
-    if (isSearchingMode) {
+    if (store.searchVisible) {
       setTimeout(() => {
-        if (!ref.current) {
-          return;
+        if (ref.current) {
+          ref.current.input.input.focus();
         }
-        const input = ref.current.input.input;
-        const touchHandler = () => {
-          input.focus();
-        };
-        input.addEventListener("touchstart", touchHandler);
-        input.dispatchEvent(new Event("touchstart"));
-        input.removeEventListener("touchstart", touchHandler);
       }, 500);
     }
-  }, [isSearchingMode]);
+  }, [store.searchVisible]);
   React.useEffect(() => {
-    if (isSearchingMode) {
+    if (store.searchVisible) {
       const handleWindowClick = () => {
-        setSearchingMode(false);
+        store.searchVisible = false;
       };
       window.addEventListener("click", handleWindowClick);
       return () => {
         window.removeEventListener("click", handleWindowClick);
       };
     }
-  }, [isSearchingMode, setSearchingMode]);
-  const [inputValue, setInputValue] = useState("");
-  const handleInputChange = React.useCallback(event => {
-    setInputValue(event.target.value);
-    fetch(
-      `${config.apiUrl}/search?query=${encodeURIComponent(event.target.value)}`,
-      { method: "get" }
-    )
-      .then(data => data.json())
-      .then(data => setSearchedBooks(data))
-      .catch(err => {
-        console.error(err);
-        notification.open({
-          message: "Our server is being down 🤯",
-          description: "Our team of the web monkeys are on the way to fix it"
-        });
-      });
-    // .finally(() => setLoading(false));
-  });
+  }, [store.searchVisible]);
+  const searchRequest = React.useCallback(
+    debounce(query => {
+      fetch(`${config.apiUrl}/search?query=${encodeURIComponent(query)}`, {
+        method: "get"
+      })
+        .then(data => data.json())
+        .then(data => setSearchedBooks(data))
+        .catch(err => {
+          console.error(err);
+          notification.open({
+            message: "Our server is being down 🤯",
+            description: "Our team of the web monkeys are on the way to fix it"
+          });
+        })
+        .finally(() => setLoading(false));
+    }, 300),
+    []
+  );
+  React.useEffect(() => {
+    if (store.searchQuery) {
+      setLoading(true);
+      searchRequest(store.searchQuery);
+    }
+  }, [store.searchQuery, searchRequest]);
   return (
     <div
       className={cx(
         styles.searchBlock,
-        isSearchingMode ? styles.isSearchingMode : styles.notSearchingMode
+        store.searchVisible ? styles.isSearchingMode : styles.notSearchingMode
       )}
       onClick={event => {
         event.nativeEvent.stopImmediatePropagation();
@@ -77,7 +79,7 @@ export const Search = () => {
         className={styles.searchInputBlock}
         onClick={event => {
           event.nativeEvent.stopImmediatePropagation();
-          setSearchingMode(true);
+          store.searchVisible = true;
         }}
       >
         <Input.Search
@@ -85,14 +87,16 @@ export const Search = () => {
           placeholder="Search for books"
           className={styles.searchInput}
           size="large"
-          disabled={isSearchingMode ? false : true}
-          onChange={handleInputChange}
+          disabled={store.searchVisible ? false : true}
+          onChange={event => (store.searchQuery = event.target.value)}
+          value={store.searchQuery}
         ></Input.Search>
       </div>
       <List
         className={styles.list}
         size="large"
         bordered
+        loading={loading}
         dataSource={searchedBooks}
         renderItem={(book, index) => (
           <List.Item>
@@ -107,7 +111,10 @@ export const Search = () => {
                       );
                       if (!existingBook) {
                         store.cart.push({ book, amount: 1 });
-                      } else existingBook.amount++;
+                      } else {
+                        existingBook.amount++;
+                      }
+                      store.cartVisible = true;
                     }}
                     size="large"
                     className={styles.buyBtn}

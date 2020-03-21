@@ -5,6 +5,7 @@ import cx from "classnames";
 import { Flipper, Flipped } from "react-flip-toolkit";
 import { Spin, Skeleton, notification } from "antd";
 import { config } from "../config";
+import { store } from "./store";
 
 const Story = dynamic(() => import("react-insta-stories"), {
   ssr: false
@@ -15,7 +16,6 @@ export const Stories = () => {
   const [loading, setLoading] = useState(true);
   const [isOpen, setOpen] = useState(false);
   const [storyIndex, setStoryIndex] = useState(1);
-  const [loading, setLoading] = useState(true);
   React.useEffect(() => {
     fetch(`${config.apiUrl}/stories`, { method: "get" })
       .then(data => data.json())
@@ -25,6 +25,8 @@ export const Stories = () => {
             url: `${config.staticUrl}/${url}`,
             type: "video",
             seeMore: () => {
+              store.searchQuery = header.heading;
+              setTimeout(() => (store.searchVisible = true), 0);
               setOpen(false);
               return null;
             },
