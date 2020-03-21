@@ -9,8 +9,8 @@ import { toJS } from "mobx";
 import { Order } from "./Order";
 
 export const Cart = () => {
-  const [isOpen, setIsOpen] = React.useState(true);
-  const [orderPage, setOrderPage] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [orderPage, setOrderPage] = React.useState(false);
   React.useEffect(() => {
     if (isOpen) {
       const handleWindowClick = () => {
