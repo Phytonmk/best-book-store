@@ -51,11 +51,11 @@ export const Search = () => {
                 }}
               ></div>
               <div className={styles.bookDescription}>
-                <span>{value.title}</span>
-                <span>{value.author}</span>
+                <span className={styles.title}>{value.title}</span>
+                <span className={styles.author}>{value.author}</span>
                 <article>{value.description}</article>
                 <span className={styles.buyBlock}>
-                  <span>{value.price}</span>
+                  <span className={styles.price}>{value.price}</span>
                   <button className={styles.buyButton}>Buy</button>
                 </span>
               </div>
