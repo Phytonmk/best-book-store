@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./Search.module.sass";
+import styles from "./Search.module.css";
 import cx from "classnames";
 import { Input } from "antd";
 
