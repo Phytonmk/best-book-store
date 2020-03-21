@@ -60,10 +60,13 @@ export const Search = () => {
                 }}
               ></div>
               <div className={styles.bookDescription}>
-                <h4>{value.title}</h4>
-                <h5>{value.author}</h5>
+                <span>{value.title}</span>
+                <span>{value.author}</span>
                 <article>{value.description}</article>
-                <span>{value.price}</span>
+                <span className={styles.buyBlock}>
+                  <span>{value.price}</span>
+                  <button className={styles.buyButton}>Buy</button>
+                </span>
               </div>
             </div>
           );
@@ -82,7 +85,7 @@ const searchedBooks = [
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
     id: "0195153448",
-    price: "5.17",
+    price: "5.17$",
     count: 84
   }
 ];
