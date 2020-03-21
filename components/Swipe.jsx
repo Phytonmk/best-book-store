@@ -7,7 +7,7 @@ import { store } from "./store";
 import { List, Avatar, notification, Button } from "antd";
 import cx from "classnames";
 
-const Card = ({ introCard = false, color, url, book }) => {
+const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
   return introCard ? (
     <div
       className={styles.swipeCard}
@@ -40,7 +40,7 @@ const Card = ({ introCard = false, color, url, book }) => {
           {book.description && (
             <div className={styles.description}>{book.description}</div>
           )}
-          {!dataIsTrue ? (
+          {!finalCard ? (
             <Button
               shape="round"
               size="large"
@@ -86,13 +86,13 @@ export const Swipe = () => {
   }, []);
 
   const [books, setBooks] = useState([]);
-  const [dataIsTrue, setDataIsTrue] = useState(true);
+  const [finalCard, setFinalCard] = useState(false);
   const loadBook = React.useCallback(() => {
     fetch(`${config.apiUrl}/book?user_id=${store.userId}`, { method: "get" })
       .then(data => data.json())
       .then(data => {
         data.found === true
-          ? setBooks(books => [JSON.parse(data.book), ...books])
+          ? setBooks(books => [data.book, ...books])
           : setBooks([
               {
                 imageLink:
@@ -101,7 +101,7 @@ export const Swipe = () => {
                   "Sorry, you have watched all the books recommended to you. You can use searching now"
               },
               ...books
-            ]) && setDataIsTrue(false);
+            ]) && setFinalCard(true);
       })
       .catch(err => {
         console.error(err);
@@ -118,7 +118,7 @@ export const Swipe = () => {
     isGood => {
       const formData = new FormData();
       formData.append("user_id", store.userId.toString());
-      formData.append("book_id", book.id);
+      formData.append("book_id", books[1].id);
       formData.append("good", isGood);
       fetch(`${config.apiUrl}/rate`, {
         method: "post",
@@ -136,9 +136,9 @@ export const Swipe = () => {
           });
         });
     },
-    [book]
+    [books[1]]
   );
-  const handleOnSwipe = swipeDirection => {
+  const handleSwipe = swipeDirection => {
     if (swipeDirection === direction.RIGHT) {
       // handle right swipe
       sendRate(true);
@@ -185,6 +185,7 @@ export const Swipe = () => {
             `${config.staticUrl}/${welcomeCards[cardNumber].url}`
           }
           book={books[1]}
+          finalCard={finalCard}
         />
       </Swipeable>
     </div>
