@@ -12,9 +12,9 @@ const Story = dynamic(() => import("react-insta-stories"), {
 
 export const Stories = () => {
   const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isOpen, setOpen] = useState(false);
   const [storyIndex, setStoryIndex] = useState(1);
-  const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
     fetch(`${config.apiUrl}/stories`, { method: "get" })
