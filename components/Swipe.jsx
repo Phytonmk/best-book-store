@@ -27,7 +27,10 @@ const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
     <div
       className={styles.swipeCard}
       style={{
-        backgroundColor: "#8FB9A8"
+        backgroundColor:
+          randomBackgroundColors[
+            Math.floor(Math.random() * randomBackgroundColors.length)
+          ]
       }}
     >
       {book && (
@@ -44,7 +47,8 @@ const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
             <Button
               shape="round"
               size="large"
-              type="ghost"
+              type="dashed"
+              // backgroundColor="white"
               onClick={() => {
                 const existingBook = store.cart.find(
                   item => item.book.id === book.id
