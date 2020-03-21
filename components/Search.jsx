@@ -4,15 +4,17 @@ import cx from "classnames";
 import { Input } from "antd";
 
 export const Search = () => {
-  const [isSearchingMode, setSearchingMode] = useState(true);
+  const [isSearchingMode, setSearchingMode] = useState(false);
   React.useEffect(() => {
-    const handleWindowClick = () => {
-      setSearchingMode(false);
-    };
-    window.addEventListener("click", handleWindowClick);
-    return () => {
-      window.removeEventListener("click", handleWindowClick);
-    };
+    if (isSearchingMode) {
+      const handleWindowClick = () => {
+        setSearchingMode(false);
+      };
+      window.addEventListener("click", handleWindowClick);
+      return () => {
+        window.removeEventListener("click", handleWindowClick);
+      };
+    }
   }, [isSearchingMode, setSearchingMode]);
   return (
     <div
