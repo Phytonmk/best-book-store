@@ -51,7 +51,9 @@ export const Cart = () => {
           header={<div>🛒 Cart</div>}
           footer={
             <div>
-              <div>{sum}$</div>
+              <p>
+                Sum: <strong>{sum}$</strong>
+              </p>
               <div>
                 <Button
                   disabled={store.cart.length === 0}
