@@ -84,7 +84,7 @@ export const Search = () => {
       >
         <Input.Search
           ref={ref}
-          placeholder="Search for books"
+          placeholder="🔍 Search for books"
           className={styles.searchInput}
           size="large"
           disabled={store.searchVisible ? false : true}
@@ -94,6 +94,9 @@ export const Search = () => {
       </div>
       <List
         className={styles.list}
+        locale={{
+          emptyText: "Try to search 👆🏼✍🏼👀"
+        }}
         size="large"
         bordered
         loading={loading}
