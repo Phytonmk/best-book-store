@@ -1,0 +1,59 @@
+.searchBlock
+  width: calc(100% - 16px)
+  height: 80vh
+  position: fixed
+  background-size: 100%
+  display: flex
+  justify-content: center
+  // align-items: center
+  border-radius: 30px 30px 0 0
+  background-color: #FCD0BA
+  left: 8px
+  transition: all .3s ease-in-out
+  // border: solid #707070 3px
+  .searchInputBlock
+    display: flex
+    background-color: #F1828D
+    justify-content: center
+    align-items: center
+    width: calc(100% - 16px)
+    height: 10vh
+    position: fixed
+    border-radius: 30px 30px 0 0
+    .searchInput
+      height: 30px
+      background-color: transparent
+      border: none
+      outline: none
+      color: rgba(256,256,256 ,1 )
+      font-size: 20px
+      text-transform: capitalize
+    .searchInput::placeholder
+      color: rgba(256,256,256 ,.5 )
+  
+.searchBlock.notSearchingMode
+  bottom: -70vh    
+.searchBlock.isSearchingMode
+  bottom: 0vh
+
+.searchedBooksBlock
+  width: calc( 100% - 16px)
+  margin-top: 10vh
+
+  .searchedBook
+    height: 150px
+    width: 100%
+    background-color: white
+    margin-top: 20px
+    display: flex
+    align-items: center
+    .bookImage
+      margin: 10px
+      width: 30%
+      height: calc(100% - 20px)
+      display: inline-block
+    .bookDescription
+      display: inline-block
+      article
+        height: 40px
+        overflow: scroll
