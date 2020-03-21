@@ -52,9 +52,17 @@ export const Stories = () => {
           return (
             <Flipper key={value.url} flipKey={fullscreenMode}>
               {fullscreenMode ? (
-                <Flipped opacity={true} scale={true} flipId={`story-${value.url}`}>{fullSize}</Flipped>
+                <Flipped
+                  opacity={true}
+                  scale={true}
+                  flipId={`story-${value.url}`}
+                >
+                  {fullSize}
+                </Flipped>
               ) : (
-                <Flipped opacity={true}  flipId={`story-${value.url}`}>{thumb}</Flipped>
+                <Flipped opacity={true} flipId={`story-${value.url}`}>
+                  {thumb}
+                </Flipped>
               )}
             </Flipper>
           );
