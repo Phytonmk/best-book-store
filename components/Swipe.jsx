@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import styles from "./Swipe.module.css";
 import { config } from "../config";
 import { store } from "./store";
-import { List, Avatar, notification, Button } from "antd";
+import { List, Avatar, notification, Button, Skeleton } from "antd";
 import cx from "classnames";
 
 const getRandomColor = seed => {
@@ -56,7 +56,7 @@ const Card = ({
         backgroundColor: getRandomColor(book ? book.imageLink : url)
       }}
     >
-      {book && (
+      {book ? (
         <div className={styles.recommendedBook}>
           <Avatar className={styles.avatar} size={200} src={book.imageLink} />
           <div className={styles.title}>
@@ -90,13 +90,18 @@ const Card = ({
             <div>{"\n"}</div>
           )}
         </div>
+      ) : (
+        <div className={styles.recommendedBook}>
+          <Skeleton.Avatar size={200} />
+          <Skeleton paragraph={3} />
+        </div>
       )}
     </div>
   );
 };
 
 export const Swipe = () => {
-  const [cardNumber, setCardNumber] = useState(0);
+  const [cardIndex, setCardIndex] = useState(0);
 
   const [welcomeCards, setWelcomeCards] = useState([]);
   React.useEffect(() => {
@@ -166,26 +171,30 @@ export const Swipe = () => {
     console.log("handleSwipe", direction);
     sendRate(direction === "right");
 
-    setCardNumber(cardNumber + 1);
-    if (cardNumber >= welcomeCards.length - 2) loadBook();
+    setCardIndex(cardIndex + 1);
+    if (cardIndex >= welcomeCards.length - 2) loadBook();
   };
 
   const [nextCardAlmostVisible, setNextCardAlmostVisible] = React.useState(
     false
   );
 
+  const bookIndex = books.length + welcomeCards.length - cardIndex - 1;
+  console.log(bookIndex);
+  console.log(books);
+
   return (
     <div className={styles.cardContainer}>
       {[
-        <Swipeable key={cardNumber} onSwipe={handleSwipe}>
+        <Swipeable key={cardIndex} onSwipe={handleSwipe}>
           <Card
-            introCard={Boolean(welcomeCards[cardNumber])}
-            color={welcomeCards[cardNumber] && welcomeCards[cardNumber].color}
+            introCard={Boolean(welcomeCards[cardIndex])}
+            color={welcomeCards[cardIndex] && welcomeCards[cardIndex].color}
             url={
-              welcomeCards[cardNumber] &&
-              `${config.staticUrl}/${welcomeCards[cardNumber].url}`
+              welcomeCards[cardIndex] &&
+              `${config.staticUrl}/${welcomeCards[cardIndex].url}`
             }
-            book={books[1] || books[0]}
+            book={books[bookIndex]}
             finalCard={finalCard}
           />
         </Swipeable>
