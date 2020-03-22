@@ -43,7 +43,7 @@ const Card = ({ introCard = false, finalCard = false, color, url, book }) => {
           {book.description && (
             <div className={styles.description}>{book.description}</div>
           )}
-          {finalCard ? (
+          {!finalCard ? (
             <Button
               shape="round"
               size="large"
@@ -95,17 +95,21 @@ export const Swipe = () => {
     fetch(`${config.apiUrl}/book?user_id=${store.userId}`, { method: "get" })
       .then(data => data.json())
       .then(data => {
-        data.found === true
-          ? setBooks(books => [data.book, ...books])
-          : setBooks([
-              {
-                imageLink:
-                  "https://cdn.pixabay.com/photo/2018/02/17/17/33/sorry-3160426_960_720.png",
-                description:
-                  "Sorry, you have watched all the books recommended to you. You can use searching now"
-              },
-              ...books
-            ]) && setFinalCard(true);
+        console.log(data);
+        if (data.found === true) {
+          setBooks(books => [data.book, ...books]);
+        } else {
+          setBooks([
+            {
+              imageLink:
+                "https://cdn.pixabay.com/photo/2018/02/17/17/33/sorry-3160426_960_720.png",
+              description:
+                "Sorry, you have watched all the books recommended to you. You can use searching now"
+            },
+            ...books
+          ]);
+          setFinalCard(true);
+        }
       })
       .catch(err => {
         console.error(err);
