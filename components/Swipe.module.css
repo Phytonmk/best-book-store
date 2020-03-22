@@ -58,6 +58,7 @@
 }
 
 .recommendedBook .title {
+  margin-top: 10px;
   padding-left: 20px;
   padding-right: 20px;
   font-weight: 900;

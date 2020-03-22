@@ -6,6 +6,7 @@ import { config } from "../config";
 import { store } from "./store";
 import { List, Avatar, notification, Button, Skeleton } from "antd";
 import cx from "classnames";
+import { runInAction } from "mobx";
 
 const getRandomColor = seed => {
   const colors = [
@@ -83,15 +84,17 @@ const Card = ({
               type="action"
               // backgroundColor="white"
               onClick={() => {
-                const existingBook = store.cart.find(
-                  item => item.book.id === book.id
-                );
-                if (!existingBook) {
-                  store.cart.push({ book, amount: 1 });
-                } else {
-                  existingBook.amount++;
-                }
-                store.cartVisible = true;
+                runInAction(() => {
+                  const existingBook = store.cart.find(
+                    item => item.book.id === book.id
+                  );
+                  store.cartVisible = true;
+                  if (!existingBook) {
+                    store.cart.push({ book, amount: 1 });
+                  } else {
+                    existingBook.amount++;
+                  }
+                });
               }}
             >
               🛒
