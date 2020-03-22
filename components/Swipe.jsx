@@ -53,12 +53,21 @@ const Card = ({
     <div
       className={styles.swipeCard}
       style={{
-        backgroundColor: getRandomColor(book ? book.imageLink : url)
+        backgroundColor: "white"
+        // getRandomColor(book ? book.imageLink : url)
       }}
     >
       {book ? (
         <div className={styles.recommendedBook}>
-          <Avatar className={styles.avatar} size={200} src={book.imageLink} />
+          <div
+            className={styles.avatar}
+            style={{
+              backgroundImage: `url( ${book.imageLink})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center"
+            }}
+          ></div>
+          {/* <img className={styles.avatar} src={book.imageLink} /> */}
           <div className={styles.title}>
             {" "}
             {book.author ? `${book.author}: ${book.title}` : " "}
@@ -68,9 +77,10 @@ const Card = ({
           )}
           {book.price ? (
             <Button
-              shape="round"
+              className={styles.buyButton}
+              shape="circle"
               size="large"
-              type="dashed"
+              type="action"
               // backgroundColor="white"
               onClick={() => {
                 const existingBook = store.cart.find(
@@ -84,7 +94,7 @@ const Card = ({
                 store.cartVisible = true;
               }}
             >
-              BUY ({book.price}$)
+              🛒
             </Button>
           ) : (
             <div>{"\n"}</div>
@@ -101,7 +111,7 @@ const Card = ({
 };
 
 export const Swipe = () => {
-  const [cardIndex, setCardIndex] = useState(0);
+  const [cardIndex, setCardIndex] = useState(4);
 
   const [welcomeCards, setWelcomeCards] = useState([]);
   React.useEffect(() => {
