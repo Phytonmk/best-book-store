@@ -66,7 +66,7 @@ const Card = ({
           {book.description && (
             <div className={styles.description}>{book.description}</div>
           )}
-          {finalCard ? (
+          {book.price ? (
             <Button
               shape="round"
               size="large"
