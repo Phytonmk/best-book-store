@@ -12,10 +12,16 @@ const Story = dynamic(() => import("react-insta-stories"), {
 });
 
 export const Stories = () => {
+  const [viewed, setViewed] = useState(false);
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setOpen] = useState(false);
   const [storyIndex, setStoryIndex] = useState(1);
+  React.useEffect(() => {
+    if (isOpen && !viewed) {
+      setViewed(true);
+    }
+  }, [isOpen, viewed]);
   React.useEffect(() => {
     fetch(`${config.apiUrl}/stories`, { method: "get" })
       .then(data => data.json())
@@ -83,7 +89,8 @@ export const Stories = () => {
                   styles.storyCircle,
                   stories[index].header
                     ? styles.withHeader
-                    : styles.withoutHeader
+                    : styles.withoutHeader,
+                  index === 0 && !viewed && styles.primary
                 )}
                 style={{
                   backgroundImage: stories[index].header
