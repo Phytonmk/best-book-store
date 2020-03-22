@@ -114,7 +114,7 @@ const Card = ({
 };
 
 export const Swipe = () => {
-  const [cardIndex, setCardIndex] = useState(4);
+  const [cardIndex, setCardIndex] = useState(0);
 
   const [welcomeCards, setWelcomeCards] = useState([]);
   React.useEffect(() => {
